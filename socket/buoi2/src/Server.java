@@ -1,0 +1,48 @@
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
+
+public class Server {
+    private int port;
+    private DatagramSocket socket;
+    private byte[] receiveData,sendData;
+    private DatagramPacket receivePacket;
+    private DatagramPacket sendPacket;
+
+    public Server(int port){
+        this.port = port;
+    }
+    public int UCLN(int a,int b){
+        while (a!=b){
+            if(a>b) a-=b;
+            else b-=a;
+        }
+        return a;
+    }
+    public String getData() throws IOException {
+        this.socket = new DatagramSocket(this.port);
+        //nhan dl
+        this.receiveData = new byte[256];
+        this.receivePacket = new DatagramPacket(this.receiveData,this.receiveData.length);
+        this.socket.receive(this.receivePacket);
+        //xly
+        String str = new String(receivePacket.getData()).trim();
+        return str;
+    }
+    public void sendData(String str) throws IOException {
+        String tl="";
+        String[] s = str.split(",");
+        int a = Integer.parseInt(s[0]);
+        int b = Integer.parseInt(s[1]);
+        if(UCLN(a,b)==1) tl="Hai so nguyen to cung nhau";
+        else tl="Hai so khong nguyen to cung nhau";
+        this.sendData = new byte[256];
+        this.sendData = tl.getBytes();
+        //this.sendPacket = new DatagramSocket(this.sendData,this.sendData.length,this.receivePacket,this.receivePacket.getPort());
+        this.sendPacket = new DatagramPacket(this.sendData,this.sendData.length,this.receivePacket.getAddress(),this.receivePacket.getPort());
+        this.socket.send(this.sendPacket);
+
+    }
+
+}
